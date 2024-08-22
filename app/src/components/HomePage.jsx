@@ -1,68 +1,67 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { LazyLoadImage, LazyLoadComponent } from 'react-lazy-load-image-component';
 
-// Tool components
-import Header from '../../components/toolComponents/HeaderComponet';
-import Footer from '../toolComponents/FooterComponent';
-//---------------------------------------------------------------
-
 //Videos
-import macBook from '../../imagesVideos/ads/videos/macBook.mp4';
-import galaxyS24 from '../../imagesVideos/ads/videos/galaxy-s24.webm';
+import macBook from '../imagesVideos/ads/videos/macBook.mp4';
+import galaxyS24 from '../imagesVideos/ads/videos/galaxy-s24.webm';
 
 //elctronics category container imges 
-import applePhones from '../../imagesVideos/categoryImgs/applePhones.png';
-import components from '../../imagesVideos/categoryImgs/components.png';
-import laptops from '../../imagesVideos/categoryImgs/laptops.png';
+import applePhones from '../imagesVideos/categoryImgs/applePhones.png';
+import components from '../imagesVideos/categoryImgs/components.png';
+import laptops from '../imagesVideos/categoryImgs/laptops.png';
 
 //Favorited Product Icons
-import unfavoritedIcon from '../../imagesVideos/cardIcons/unfavorited.png';
-import favoritedIcon from '../../imagesVideos/cardIcons/favorited.png';
+import unfavoritedIcon from '../imagesVideos/cardIcons/unfavorited.png';
+import favoritedIcon from '../imagesVideos/cardIcons/favorited.png';
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 const baseUrl = process.env.REACT_APP_BASE_URL;
 
 const HomePage = () => {
-    const electronicsCategoryRef = useRef(null);
+  const electronicsCategoryRef = useRef(null);
 
-//Main Promo
+// Main Promo //change
 
-    const [mainPromoRightItems, setMainPromoRightItems] = useState({});
+  const [mainPromoRightItems, setMainPromoRightItems] = useState({});
 
-//Middle Promo
+// Middle Promo //change
 
-    const [middleLeftPromoItems, setMiddlePromoLeftItems] = useState({});
-    const [middleRightPromoItems, setMiddlePromoRightItems] = useState({});
+  const [middleLeftPromoItems, setMiddlePromoLeftItems] = useState({});
+  const [middleRightPromoItems, setMiddlePromoRightItems] = useState({});
 
-//Extra Promo
+//Extra Promo //change
 
-    const [extraLeftPromoItems, setExtraLeftPromoItems] = useState({}); 
+  const [extraLeftPromoItems, setExtraLeftPromoItems] = useState({}); 
 
-//Categories
+// Categories //change
 
-    const [cellPhonesAndGadgets, setCellPhonesAndGadgets] = useState('');
-    const [pcComponents, setPcComponents] = useState('');
-    const [computersAndLaptops, setComputersAndLaptops] = useState('');
-  
-//Random
+  const [cellPhonesAndGadgets, setCellPhonesAndGadgets] = useState('');
+  const [pcComponents, setPcComponents] = useState('');
+  const [computersAndLaptops, setComputersAndLaptops] = useState('');
 
-    const [randomProducts, setRandomProducts] = useState([]);
+// Random //change
 
-    const [selectedLanguage2, setSelectedLanguage2] = useState('');
+  const [randomProducts, setRandomProducts] = useState([]);
+
+// Gettting Stored To Local Ttorage Selected Language---------------------------------------------------------------------------------------------------------------
+
+  const [selectedLanguage2, setSelectedLanguage2] = useState('');
     
-    useEffect(() => {
-      const fetchStoredString = () => {
-        const retrievedString = localStorage.getItem('selectedLanguage');
-          if (retrievedString) {
-            setSelectedLanguage2(retrievedString);
-          } else {
-            console.warn('No string found in local storage.');
-          };
-        };
+  useEffect(() => {
+    const getLocalStoredString = () => {
+      const retrievedString = localStorage.getItem('selectedLanguage');
+      if (retrievedString) {
+        setSelectedLanguage2(retrievedString);
+      } else {
+        console.warn('No string found in local storage.');
+      };
+    };
     
-      fetchStoredString();
-    }, [selectedLanguage2]);
+    getLocalStoredString();
+  }, [selectedLanguage2]);
 
-//Scrolling--------------------------------------------------------------------------------------------------------------------------------------------------------
+// Scrolling---------------------------------------------------------------------------------------------------------------------------------------------------------
 
     useEffect(() => {
       const electronicsCategoryContainer = electronicsCategoryRef.current;
@@ -81,7 +80,7 @@ const HomePage = () => {
       };
     }, []);    
 
-  //Fetching-------------------------------------------------------------------------------------------------------------------------------------------------------
+// Fetching----------------------------------------------------------------------------------------------------------------------------------------------------------
   
   useEffect(() => {
     const fetchMainPromo = async () => {
@@ -142,28 +141,13 @@ const HomePage = () => {
         try {
             const response = await fetch(url);
             const data = await response.json();
-            setRandomProducts([
-            {
-              main: data.data[0],
-              hovered: false,
-              favorited: false,
-            },
-            {
-              main: data.data[1],
-              hovered: false,
-              favorited: false,
-            },
-            {
-              main: data.data[2],
-              hovered: false,
-              favorited: false,
-            },
-            {
-              main: data.data[3],
-              hovered: false,
-              favorited: false,
-            },
-          ]);
+            setRandomProducts(data.data.map((elem) => (
+              {
+                main: elem,
+                hovered: false,
+                favorited: false,
+              }
+            )));
         } catch (err) {
           console.error(err);
         };
@@ -193,46 +177,11 @@ const HomePage = () => {
       updatedRandomProducts[index].favorited = !updatedRandomProducts[index].favorited;
       setRandomProducts(updatedRandomProducts);
     };
-  
-    const listOfRandomProducts = randomProducts.map((elem, i) => (
-      <li
-        key={i}
-        onMouseEnter={() => handleMouseEnter(i)}
-        onMouseLeave={() => handleMouseLeave(i)}
-        className='flex flex-col items-around overflow-hidden'
-        style={{ height: '470px', width: '600px', }}
-      >
-        <div className="flex flex-col items-center justify-end h-full relative">
-  {/*Hard Functionality*/}
-          {elem.hovered ? <img
-            className='h-6 w-6 absolute top-3 right-5 duration-300 z-10'
-            src={elem.favorited ? favoritedIcon : unfavoritedIcon}
-            onClick={() => handleFavoriteClick(i)}
-          /> : ''}
-          <LazyLoadImage 
-            id='cardImg'
-            className={`duration-200 absolute ${elem.hovered ? 'top-10' : 'top-20'}`}
-            style={{ height: elem.hovered ? '260px' : '250px', width: elem.hovered ? '260px' : '250px'}}
-            src={elem.main.thumbnail} 
-          />
-          <div className='w-full flex flex-col justify-between'>
-            <span className='text-sm text-blue-800 w-full pl-4'>{elem.main.brand.slug}</span>
-            <div className='text-sm flex justify-between items-center w-full px-4 mt-2'>
-              <span>{elem.main.slug}</span>
-              <span>{elem.main.price}</span>
-            </div>
-          </div>
-        </div>
-        <button className={`w-full h-20 text-center text-white bg-blue-800 tag ${elem.hovered ? 'show' : ''}`}>
-          + Add to cart
-        </button>
-      </li>
-    ));
     
-    return (
-      <>
-      <Header />
-        <main className='w-full h-full mt-32'>
+  return (
+    <>
+      <main className='w-full h-full mt-32'>
+{/* Starting Container-------------------------------------------------------------------------------------------------------------------------------------------- */}
         <div className='px-9 flex justify-center' style={{height: '700px'}}>
           <div className='pr-2' style={{width: '1020px'}}>
             <div className='relative'>
@@ -258,14 +207,14 @@ const HomePage = () => {
                 src={mainPromoRightItems.image}
               />
             </div>
-            <button className='border-2 border-blue-800 bg-blue-800 text-5xl rounded-xl text-white w-full mt-3 hover:bg-white hover:text-blue-800 relative' style={{height: '120px'}}>
+            <button className='border-2 border-blue-800 bg-blue-800 text-5xl rounded-xl text-white w-full mt-3 hover:bg-white hover:text-blue-800 relative shadow-xl' style={{height: '120px'}}>
               <h1>Sale <b className='absolute top-2 right-5 text-6xl'>*</b></h1>
             </button>
             <div>
           </div>
           </div>
         </div>
-  {/*Categories-----------------------------------------------------------------------------------------------------------------------------------------------------*/}
+{/* Categories--------------------------------------------------------------------------------------------------------------------------------------------------- -*/}
         <div className='px-12' style={{height: '800px'}}>
           <h1 className='mb-7 text-4xl'>Electronics</h1>
           <div id='electronicsCategory' ref={electronicsCategoryRef} className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth text-xl no-scrollbar">
@@ -293,7 +242,7 @@ const HomePage = () => {
               />
               <span className='mt-2 pl-2 block'>{computersAndLaptops.slug}</span>
             </div>
-  {/*Repeating------------------------------------------------------------------------------------------------------------------------------------------------------*/}
+{/* Repeating----------------------------------------------------------------------------------------------------------------------------------------------------- */}
             <div className='snap-start flex-none mr-2 mb-4'>
               <LazyLoadImage
                 style={{width: '400px', height: '400px'}}
@@ -320,17 +269,49 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-  {/*New Arrivals---------------------------------------------------------------------------------------------------------------------------------------------------*/}
+{/* Random Products----------------------------------------------------------------------------------------------------------------------------------------------- */}
         <div className='px-12 w-full overflow-auto' style={{height: '850px'}}>
           <div className='flex justify-between mb-20'>
             <h1 className='text-4xl'>New arrivals</h1>
             <span className='text-slate-600 underline decoration-solid'>Show all</span>
           </div>
-          <ul className='flex justify-center'>
-            {listOfRandomProducts}
+          <ul className='flex justify-center overflow-hidden'>
+            {randomProducts.map((elem, i) => (
+              <li
+                key={i}
+                onMouseEnter={() => handleMouseEnter(i)}
+                onMouseLeave={() => handleMouseLeave(i)}
+                className='flex flex-col items-around overflow-hidden'
+                style={{ height: '470px', width: '600px', }}
+              >
+                <div className="flex flex-col items-center justify-end h-full relative">
+                  {elem.hovered ? <img
+                    className='h-6 w-6 absolute top-10 right-10 duration-300 z-10'
+                    src={elem.favorited ? favoritedIcon : unfavoritedIcon}
+                    onClick={() => handleFavoriteClick(i)}
+                  /> : ''}
+                  <LazyLoadImage 
+                    id='cardImg'
+                    className={`duration-200 absolute ${elem.hovered ? 'top-20' : 'top-32'}`}
+                    style={{ height: elem.hovered ? '260px' : '250px', width: elem.hovered ? '260px' : '250px'}}
+                    src={elem.main.thumbnail} 
+                  />
+                  <div className='w-full flex flex-col justify-between'>
+                    <span className='text-sm text-blue-800 w-full pl-4'>{elem.main.brand.slug}</span>
+                    <div className='text-sm flex justify-between items-center w-full px-4 mt-2'>
+                      <span>{elem.main.slug}</span>
+                      <span>{elem.main.price}</span>
+                    </div>
+                  </div>
+                </div>
+                <button className={`w-full h-20 text-center text-white bg-blue-800 tag ${elem.hovered ? 'show' : ''}`}>
+                  + Add to cart
+                </button>
+              </li>
+            ))}
           </ul>
         </div>
-  {/*Banners--------------------------------------------------------------------------------------------------------------------------------------------------------*/}
+{/* Banners------------------------------------------------------------------------------------------------------------------------------------------------------- */}
         <div className='px-12 mb-10 w-full'>
           <div className='flex justify-center' style={{height: '800px'}}>
             <div className='h-full bg-slate-100 rounded-xl flex flex-col justify-end mr-2 relative' style={{maxWidth: '700px', width: '700px'}}>
@@ -367,7 +348,7 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-  {/*Promo videos---------------------------------------------------------------------------------------------------------------------------------------------------*/}
+{/* Promo videos-------------------------------------------------------------------------------------------------------------------------------------------------- */}
         <div className='w-full flex justify-center items-center mb-20'>
           <div className='relative flex justify-center' style={{height: '800px'}}>
             <LazyLoadComponent>
@@ -383,9 +364,8 @@ const HomePage = () => {
           </div>
         </div>
       </main>
-      <Footer />
-      </>
-    );
-  };
+    </>
+  );
+};
 
-  export default HomePage;
+export default HomePage;
