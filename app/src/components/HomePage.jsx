@@ -63,22 +63,26 @@ const HomePage = () => {
 
 // Scrolling---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    useEffect(() => {
-      const electronicsCategoryContainer = electronicsCategoryRef.current;
-  
-      const onWheel = (event) => {
-        event.preventDefault();
-        electronicsCategoryContainer.scrollBy({
-          left: event.deltaY,
-        });
-      };
-  
-      electronicsCategoryContainer.addEventListener('wheel', onWheel);
-  
-      return () => {
-        electronicsCategoryContainer.removeEventListener('wheel', onWheel);
-      };
-    }, []);    
+useEffect(() => {
+  const electronicsCategoryContainer = electronicsCategoryRef.current;
+
+  const onWheel = (event) => {
+    if (event.deltaY !== 0) {
+      event.preventDefault();
+      electronicsCategoryContainer.scrollBy({
+        left: event.deltaY, // you can change its speed by doing this ===> left: event.deltaY * yourNumber
+        behavior: 'smooth',
+      });
+    }
+  };
+
+  electronicsCategoryContainer.addEventListener('wheel', onWheel);
+
+  return () => {
+    electronicsCategoryContainer.removeEventListener('wheel', onWheel);
+  };
+}, []);
+
 
 // Fetching----------------------------------------------------------------------------------------------------------------------------------------------------------
   

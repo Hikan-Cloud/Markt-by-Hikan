@@ -69,24 +69,24 @@ const Layout = () => {
 
 // Footer Fetched Items
 
-  const [footerItems, setFooterItems] = useState({
-    line1: ['', '', ''],
-    line2: ['', '', ''],
-  });
+  const [footerItems, setFooterItems] = useState({});
 
 // Shadow------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-  const blackShadow = () => {
-    if (menuIsOpen) { 
-      return (<div className='fixed bg-slate-800/50 h-full w-full z-10' onClick={() => setMenuIsOpen(handleMenuOpening())}></div>);
-    } else if (searchBarInputIsOpen) {
-      return (<div className='fixed bg-slate-800/50 h-full w-full z-10' onClick={() => setSearchBarInputIsOpen(!searchBarInputIsOpen)}></div>);
-    } if (electronicsCategoryIsOpen) {
-      return (<div className='fixed bg-slate-800/50 h-full w-full z-10' onClick={() => setElectronicsCategoryIsOpen(!electronicsCategoryIsOpen)}></div>);
+  const handleBlackShadow = () => {
+    if (menuIsOpen) { setMenuIsOpen(handleMenuOpening())}
+    else if (searchBarInputIsOpen) {setSearchBarInputIsOpen(!searchBarInputIsOpen)}
+    else if (electronicsCategoryIsOpen) {setElectronicsCategoryIsOpen(!electronicsCategoryIsOpen)}
+  };
+
+  const shadowIsOpen = () => {
+    if (menuIsOpen || searchBarInputIsOpen || electronicsCategoryIsOpen) {
+      return <div className='fixed bg-slate-800/50 h-full w-full z-10' onClick={() => handleBlackShadow()}></div>
     };
   };
 
 // Annimations------------------------------------------------------------------------------------------------------------------------------------------------------
+  
   const handleMouseEnter = (index) => {
     const updatedRandomProducts = [...randomProducts];
     updatedRandomProducts[index].hovered = true;
@@ -197,11 +197,7 @@ const Layout = () => {
         },
         });
         const data = await response.json();
-
-        setFooterItems({
-          line1: data['line_1'],
-          line2: data['line_2'],
-        });
+        setFooterItems(data);
       } catch (error) {
         console.error(error);
       };
@@ -353,7 +349,7 @@ const Layout = () => {
           </div>
         </div> : ''}
       </header>
-      {blackShadow()}
+      {shadowIsOpen()}
       <Outlet />
       <footer className='flex justify-between px-9 w-full pt-20 border-t-gray-300 border-t-2' style={{ height: '500px' }}>
         <div id='leftSide' className='w-1/3 flex flex-col items-start justify-between h-full p-6'>
@@ -363,17 +359,23 @@ const Layout = () => {
         <div id='rightSide' className='w-full flex justify-between h-full pr-72'>
           <div className='flex flex-col items-start w-1/3 p-12 relative'>
             <div className='flex flex-col gap-4'>
-              <span className='text-blue-800'>{footerItems.line1[0]?.slug}*</span>
-              <span>{footerItems.line1[1]?.slug}</span>
-              <span>{footerItems.line1[2]?.slug}</span>
+              <span className='text-blue-800'>
+                {footerItems?.line_1?.[0]?.slug.charAt(0).toUpperCase() + footerItems?.line_1?.[0]?.slug.slice(1).split('-').join(' ') || ''}*
+              </span>
+              <span>
+                {footerItems?.line_1?.[1]?.slug.charAt(0).toUpperCase() + footerItems?.line_1?.[1]?.slug.slice(1).split('-').join(' ') || ''}
+              </span>
+              <span>
+                {footerItems?.line_1?.[2]?.slug.charAt(0).toUpperCase() + footerItems?.line_1?.[2]?.slug.slice(1).split('-').join(' ') || ''}
+              </span>
               <img className='absolute bottom-0 left-2' src={shopPayIcon} alt="Shop Pay" />
             </div>
           </div>
           <div className='flex flex-col items-start w-1/3 p-12'>
             <div className='flex flex-col'>
-              <span>{footerItems.line2[0]?.slug}</span>
-              <span>{footerItems.line2[1]?.slug}</span>
-              <span>{footerItems.line2[2]?.slug}</span>
+              <span>{footerItems?.line_2?.[0]?.slug || ''}</span>
+              <span>{footerItems?.line_2?.[1]?.slug || ''}</span>
+              <span>{footerItems?.line_2?.[2]?.slug || ''}</span>
             </div>
           </div>
           <div className='flex flex-col items-start w-1/3 p-12 relative'>
